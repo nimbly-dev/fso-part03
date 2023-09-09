@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/contacts/saveContact
+Content-type: application/json
+
+{
+    "name": "Testa",
+    "number": "123456"
+}
+
+###
+GET http://localhost:3001/contacts/getContacts
