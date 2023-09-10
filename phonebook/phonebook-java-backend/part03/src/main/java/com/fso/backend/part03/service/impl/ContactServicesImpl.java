@@ -26,6 +26,11 @@ public class ContactServicesImpl implements ContactServices {
     }
 
     @Override
+    public int getTotalContacts() {
+        return contactRepository.countContacts();
+    }
+
+    @Override
     public Contact saveContact(ContactRequest contactRequest) {
         return contactRepository.save(EntityMapper.mapContacyRequestToContact(contactRequest));
     }

@@ -15,4 +15,6 @@ public interface ContactRepository  extends JpaRepository<Contact, Long> {
     @Query("select c from Contact c where c.name = ?1")
     Optional<Contact> findByName(String name);
 
+    @Query("select COUNT(c) from Contact c")
+    int countContacts();
 }

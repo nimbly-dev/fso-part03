@@ -1,4 +1,7 @@
 const express = require('express')
+const ApiResponse = require('./model/ApiResponse.js')
+
+
 const app = express()
 app.use(express.json())
 
@@ -27,6 +30,10 @@ let contacts = [
 
 app.get('/api/contacts/getContacts', (request, response) => {
     response.json(contacts)
+})
+
+app.get('/api/contacts/info', (request, response)=>{
+    response.json(new ApiResponse(contacts.length))
 })
 
 
