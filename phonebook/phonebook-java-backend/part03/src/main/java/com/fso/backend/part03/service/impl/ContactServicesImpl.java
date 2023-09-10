@@ -8,7 +8,6 @@ import com.fso.backend.part03.repository.ContactRepository;
 import com.fso.backend.part03.service.ContactServices;
 import com.fso.backend.part03.util.EntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +27,11 @@ public class ContactServicesImpl implements ContactServices {
     @Override
     public int getTotalContacts() {
         return contactRepository.countContacts();
+    }
+
+    @Override
+    public Optional<Contact> getContactById(long id) {
+        return contactRepository.findById(id);
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/contacts")
@@ -16,7 +17,7 @@ public class ContactController {
     @Resource
     private ContactServices contactServices;
 
-    @GetMapping(value = "/getContacts")
+    @GetMapping(value = "/")
     public ResponseEntity<ApiResponse<List<Contact>>> getContacts(){
         return ResponseEntity.ok(new ApiResponse("success",contactServices.getAllContacts()));
     }
@@ -24,6 +25,17 @@ public class ContactController {
     @GetMapping(value = "/info")
     public ResponseEntity<ApiResponse<Integer>> getTotalContacts(){
         return ResponseEntity.ok(new ApiResponse<>("success", contactServices.getTotalContacts()));
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<ApiResponse<Contact>> getContact(@PathVariable String id){
+        Optional<Contact> contact = contactServices.getContactById(Long.parseLong(id));
+
+        if(contact.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }else {
+            return ResponseEntity.ok(new ApiResponse<Contact>("success",contact.get()));
+        }
     }
 
     @PostMapping(value = "/saveContact")

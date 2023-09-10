@@ -1,1 +1,1 @@
-GET http://localhost:3001/api/contacts/getContacts
+GET http://localhost:3001/api/contacts/

@@ -28,12 +28,24 @@ let contacts = [
     }
 ]
 
-app.get('/api/contacts/getContacts', (request, response) => {
+app.get('/api/contacts/', (request, response) => {
     response.json(contacts)
 })
 
 app.get('/api/contacts/info', (request, response)=>{
     response.json(new ApiResponse(contacts.length))
+})
+
+app.get('/api/contacts/:id',(request,response)=>{
+  const id = Number(request.params.id)
+  const contact = contacts.find(contact => contact.id === id)
+
+  if(contact){
+    response.json(contact)
+  }else{
+    response.status(404).end()
+  }
+
 })
 
 
