@@ -1,5 +1,6 @@
 const express = require('express')
 const ApiResponse = require('./model/ApiResponse.js')
+const Contact = require('./model/Contact.js')
 
 
 const app = express()
@@ -46,6 +47,29 @@ app.get('/api/contacts/:id',(request,response)=>{
     response.status(404).end()
   }
 
+})
+
+const generateId = () => {
+  const maxId = contacts.length > 0
+    ? Math.max(...contacts.map(n => n.id))
+    : 0
+  return maxId + 1
+}
+
+app.post('/api/contacts', (request, response)=>{
+  const body = request.body
+
+  if (!body.name) {
+    return response.status(400).json({ 
+      error: 'name missing' 
+    })
+  }
+
+  const contact = new Contact(generateId,body.name,body.number);
+
+  contacts = contacts.concat(contact);
+
+  response.json(new ApiResponse(contact));
 })
 
 
