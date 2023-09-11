@@ -38,7 +38,7 @@ public class ContactController {
         }
     }
 
-    @PostMapping(value = "/saveContact")
+    @PostMapping(value = "/")
     public ResponseEntity<ApiResponse<Contact>> saveContact(@RequestBody ContactRequest contactRequest){
         return ResponseEntity.ok(new ApiResponse<>("success",contactServices.saveContact(contactRequest)));
     }

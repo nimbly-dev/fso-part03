@@ -7,4 +7,4 @@ Content-type: application/json
 }
 
 ###
-GET http://localhost:3001/api/contacts
+GET http://localhost:3001/api/contacts/

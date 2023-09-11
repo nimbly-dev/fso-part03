@@ -1,4 +1,5 @@
 package com.fso.backend.part03.model;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,9 @@ import lombok.Setter;
 public class Contact {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "contact_generator")
+    @SequenceGenerator(name = "contact_generator", initialValue = 10)
+    @Column(nullable = false)
     private Long id;
 
     @Column(nullable = false)

@@ -53,7 +53,7 @@ const generateId = () => {
   const maxId = contacts.length > 0
     ? Math.max(...contacts.map(n => n.id))
     : 0
-  return maxId + 1
+  return maxId + 100
 }
 
 app.post('/api/contacts', (request, response)=>{
@@ -65,7 +65,7 @@ app.post('/api/contacts', (request, response)=>{
     })
   }
 
-  const contact = new Contact(generateId,body.name,body.number);
+  const contact = new Contact(generateId(),body.name,body.number);
 
   contacts = contacts.concat(contact);
 
