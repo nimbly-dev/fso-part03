@@ -59,9 +59,15 @@ const generateId = () => {
 app.post('/api/contacts', (request, response)=>{
   const body = request.body
 
-  if (!body.name) {
+  if (!body.name || body.number) {
     return response.status(400).json({ 
-      error: 'name missing' 
+      error: 'fields must not be empty' 
+    })
+  }
+
+  if(contacts.some(contact=>contact.name===body.name)){
+    return response.status(400).json({
+      error: 'name already exist'
     })
   }
 

@@ -1,5 +1,6 @@
 package com.fso.backend.part03.controller;
 
+import com.fso.backend.part03.exceptions.EmptyValuesException;
 import com.fso.backend.part03.model.ApiResponse;
 import com.fso.backend.part03.model.Contact;
 import com.fso.backend.part03.model.dao.ContactRequest;
@@ -30,22 +31,20 @@ public class ContactController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<ApiResponse<Contact>> getContact(@PathVariable String id){
         Optional<Contact> contact = contactServices.getContactById(Long.parseLong(id));
-
-        if(contact.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }else {
-            return ResponseEntity.ok(new ApiResponse<Contact>("success",contact.get()));
-        }
+        return ResponseEntity.ok(new ApiResponse<Contact>("success",contact.get()));
     }
 
     @PostMapping(value = "/")
     public ResponseEntity<ApiResponse<Contact>> saveContact(@RequestBody ContactRequest contactRequest){
+        if(contactRequest.getName().isEmpty() || contactRequest.getNumber().isEmpty()){
+            throw new EmptyValuesException("fields must not be empty");
+        }
+
         return ResponseEntity.ok(new ApiResponse<>("success",contactServices.saveContact(contactRequest)));
     }
 
-    @DeleteMapping(value = "/deleteContact")
-    //TODO: Fix bug where deleting non-existing Contact causes 500 instead of 404
-    public void deleteContact(@RequestParam long id){
+    @DeleteMapping(value = "/{id}")
+    public void deleteContact(@PathVariable long id){
         contactServices.deleteContact(id);
     }
 }

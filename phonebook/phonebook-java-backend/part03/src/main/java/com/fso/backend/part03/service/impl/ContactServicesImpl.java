@@ -1,6 +1,7 @@
 package com.fso.backend.part03.service.impl;
 
 
+import com.fso.backend.part03.exceptions.AlreadyExistsException;
 import com.fso.backend.part03.exceptions.NotFoundException;
 import com.fso.backend.part03.model.Contact;
 import com.fso.backend.part03.model.dao.ContactRequest;
@@ -31,11 +32,21 @@ public class ContactServicesImpl implements ContactServices {
 
     @Override
     public Optional<Contact> getContactById(long id) {
-        return contactRepository.findById(id);
+        Optional<Contact> contact = contactRepository.findById(id);
+
+        if(contact.isEmpty()){
+            throw new NotFoundException("cpntact not found");
+        }
+
+        return contact;
     }
 
     @Override
     public Contact saveContact(ContactRequest contactRequest) {
+        if(contactRepository.existsByName(contactRequest.getName())){
+            throw new AlreadyExistsException("name already exists");
+        }
+
         return contactRepository.save(EntityMapper.mapContacyRequestToContact(contactRequest));
     }
 
