@@ -1,10 +1,15 @@
 const express = require('express')
 const ApiResponse = require('./model/ApiResponse.js')
 const Contact = require('./model/Contact.js')
+var morgan = require('morgan')
 
 
 const app = express()
 app.use(express.json())
+
+morgan.token('body', (req, res) => JSON.stringify(req.body));
+app.use(morgan(':method :url :status - :res[content-length] :response-time ms :body'));
+
 
 let contacts = [
     { 
@@ -59,7 +64,7 @@ const generateId = () => {
 app.post('/api/contacts', (request, response)=>{
   const body = request.body
 
-  if (!body.name || body.number) {
+  if (!body.name || !body.number) {
     return response.status(400).json({ 
       error: 'fields must not be empty' 
     })
