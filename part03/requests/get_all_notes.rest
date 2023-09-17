@@ -1,1 +1,1 @@
-GET http://localhost:3001/api/notes/
+GET https://example-node-js.onrender.com/api/notes/

@@ -7,12 +7,8 @@ const requestLogger = (request, response, next) => {
   console.log('---')
   next()
 }
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
 
 app.use(requestLogger)
-app.use(unknownEndpoint)
 app.use(express.json())
 
 let notes = [
@@ -90,3 +86,5 @@ const generateId = () => {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
+
+  app.use(express.static('dist'))
