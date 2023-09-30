@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import { useState } from 'react'
-import { autoIncrementId, isNameAlreadyExists } from './utility/PhonebookUtil'
+import { isNameAlreadyExists } from './utility/PhonebookUtil'
 import Form from './components/Form'
 import InputField from './components/InputField'
 import PersonList from './components/phonebook/PersonList'
@@ -51,9 +51,9 @@ const App = () => {
         const personWithSameName = persons.find((person) => person.name === newName);
 
         phonebookService
-          .updatePerson(personWithSameName.id,{...personWithSameName,number: newNumber})
-            .then((updatedPerson) => {
-                setPersons(prevPersons => prevPersons.map(person =>person.id === updatedPerson.id ? updatedPerson : person))
+          .savePerson({...personWithSameName,number: newNumber})
+            .then((response) => {
+                setPersons(prevPersons => prevPersons.map(person =>person.id === response.data.id ? response.data : person))
                 setNewName('');
                 setNewNumber('');
             })
@@ -64,8 +64,8 @@ const App = () => {
     }else{
       phonebookService
         .savePerson(personObj)
-          .then(person => {
-            setPersons(persons.concat(person));
+          .then(response => {
+            setPersons(persons.concat(response.data));
             setNewName('');
             setNewNumber('');
             setNotification({
@@ -104,7 +104,6 @@ const App = () => {
             });
     }
   };
-
 
   return (
     <div>

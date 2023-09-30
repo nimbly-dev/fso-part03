@@ -70,17 +70,39 @@ app.post('/api/contacts', (request, response)=>{
     })
   }
 
-  if(contacts.some(contact=>contact.name===body.name)){
-    return response.status(400).json({
-      error: 'name already exist'
-    })
+  const existingContactIndex = contacts.findIndex(contact => contact.name === body.name);
+
+  if (existingContactIndex !== -1) {
+    // Contact with the same name already exists, so update it
+    contacts[existingContactIndex].number = body.number;
+    return response.status(200).json(new ApiResponse(contacts[existingContactIndex]));
   }
 
   const contact = new Contact(generateId(),body.name,body.number);
-
   contacts = contacts.concat(contact);
 
   response.json(new ApiResponse(contact));
+})
+
+
+app.delete('/api/contacts/:id', (request,response)=>{
+  const id = Number(request.params.id)
+
+  if(id == null){
+    return response.status(404).json({
+      error: 'Id param must not be empty'
+    })
+  }
+
+  contacts = contacts.filter(note=>note.id !== id)
+
+  if(contacts){
+    response.status(204).end()
+  }else{
+    response.status(404).json({
+      error: 'Id does not exist'
+    })
+  }
 })
 
 
