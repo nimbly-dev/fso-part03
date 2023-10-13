@@ -7,9 +7,7 @@ if (process.argv.length<3) {
 
 const password = process.argv[2]
 
-const url =
-  `mongodb+srv://altheosaqui:${password}@cluster0.2wsjoug.mongodb.net/noteApp?retryWrites=true&w=majority`;
-
+const url =`mongodb+srv://altheosaqui:${password}@cluster0.2wsjoug.mongodb.net/?retryWrites=true&w=majority`;
 mongoose.set('strictQuery',false)
 mongoose.connect(url)
 
@@ -25,17 +23,24 @@ const note = new Note({
   important: true,
 })
 
-const note2 = new Note({
-  content: 'HTML is Easy',
-  important: true,
-})
+// const note2 = new Note({
+//   content: 'HTML is Easy',
+//   important: true,
+// })
 
-note.save().then(result => {
-  console.log('note saved!')
-  mongoose.connection.close()
-})
+// note.save().then(result => {
+//   console.log('note saved!')
+//   mongoose.connection.close()
+// })
 
-note2.save().then(result => {
-  console.log('note saved!')
+// note2.save().then(result => {
+//   console.log('note saved!')
+//   mongoose.connection.close()
+// })
+
+Note.find({}).then(result => {
+  result.forEach(note => {
+    console.log(note)
+  })
   mongoose.connection.close()
 })
