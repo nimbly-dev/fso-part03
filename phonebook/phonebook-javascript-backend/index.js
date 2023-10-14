@@ -1,6 +1,7 @@
 const express = require('express')
+require('dotenv').config()
 const ApiResponse = require('./model/ApiResponse.js')
-const Contact = require('./model/Contact.js')
+const Contact = require('./model/contact.js')
 var morgan = require('morgan')
 const cors = require('cors')
 
@@ -11,55 +12,33 @@ morgan.token('body', (req, res) => JSON.stringify(req.body));
 app.use(morgan(':method :url :status - :res[content-length] :response-time ms :body'));
 
 
-let contacts = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
 
 app.get('/api/contacts/', (request, response) => {
-    response.json(contacts)
+    Contact.find({}).then(contacts => {
+      response.json(contacts)
+    })
 })
 
 app.get('/api/contacts/info', (request, response)=>{
-    response.json(new ApiResponse(contacts.length))
+  Contact.countDocuments({})
+    .then(result=>{
+      response.json(new ApiResponse(result))
+    })
+    .catch(error=>{
+      console.log(error)
+      response.status(500).end()
+    })
 })
 
 app.get('/api/contacts/:id',(request,response)=>{
   const id = Number(request.params.id)
-  const contact = contacts.find(contact => contact.id === id)
-
-  if(contact){
-    response.json(contact)
-  }else{
-    response.status(404).end()
-  }
-
+  Contact.findByIdAndRemove(request.params.id)
+    .then(result => {
+        response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
-const generateId = () => {
-  const maxId = contacts.length > 0
-    ? Math.max(...contacts.map(n => n.id))
-    : 0
-  return maxId + 100
-}
 
 app.post('/api/contacts', (request, response)=>{
   const body = request.body
@@ -70,39 +49,54 @@ app.post('/api/contacts', (request, response)=>{
     })
   }
 
-  const existingContactIndex = contacts.findIndex(contact => contact.name === body.name);
-
-  if (existingContactIndex !== -1) {
-    // Contact with the same name already exists, so update it
-    contacts[existingContactIndex].number = body.number;
-    return response.status(200).json(new ApiResponse(contacts[existingContactIndex]));
+  try {
+    Contact.findOne({ name: body.name }).exec()
+      .then(existingContact => {
+        if (existingContact) {
+          // An existing contact with the same name was found
+          return response.status(400).json(new ApiResponse(`An existing contact with the name ${body.name} was found.`));
+        } else {
+          // Create and save the new contact
+          const newContact = new Contact({ name: body.name });
+          newContact.save()
+            .then(savedContact => {
+              response.json(savedContact);
+            })
+            .catch(saveErr => {
+              console.error(saveErr);
+              response.status(500).json(new ApiResponse("Error while saving the contact."));
+            });
+        }
+      })
+      .catch(queryErr => {
+        console.error(queryErr);
+        response.status(500).json(new ApiResponse("Error while querying the database."));
+      });
+  } catch (err) {
+    console.log(err);
   }
-
-  const contact = new Contact(generateId(),body.name,body.number);
-  contacts = contacts.concat(contact);
-
-  response.json(new ApiResponse(contact));
+  
 })
 
 
 app.delete('/api/contacts/:id', (request,response)=>{
   const id = Number(request.params.id)
 
-  if(id == null){
+  if(id == null){ 
     return response.status(404).json({
       error: 'Id param must not be empty'
     })
   }
 
-  contacts = contacts.filter(note=>note.id !== id)
-
-  if(contacts){
-    response.status(204).end()
-  }else{
-    response.status(404).json({
-      error: 'Id does not exist'
-    })
-  }
+  Contact.findByIdAndRemove(request.params.id)
+         .then(result => {
+            if(!result){
+              response.status(404).end()
+            }else{
+              response.status(204).json(new ApiResponse("Deleted")).end()
+            }
+          })
+         .catch(error => next(error))
 })
 
 

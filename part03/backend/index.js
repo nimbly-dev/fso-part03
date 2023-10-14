@@ -3,7 +3,6 @@ require('dotenv').config()
 const app = express()
 const cors = require('cors')
 const Note = require('./model/note.js')
-const note = require('./model/note.js')
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
   console.log('Path:  ', request.path)

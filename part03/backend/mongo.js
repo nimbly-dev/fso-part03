@@ -23,20 +23,11 @@ const note = new Note({
   important: true,
 })
 
-// const note2 = new Note({
-//   content: 'HTML is Easy',
-//   important: true,
-// })
+note.save().then(result => {
+  console.log('note saved!')
+  mongoose.connection.close()
+})
 
-// note.save().then(result => {
-//   console.log('note saved!')
-//   mongoose.connection.close()
-// })
-
-// note2.save().then(result => {
-//   console.log('note saved!')
-//   mongoose.connection.close()
-// })
 
 Note.find({}).then(result => {
   result.forEach(note => {
