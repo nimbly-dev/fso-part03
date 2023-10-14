@@ -12,14 +12,13 @@ morgan.token('body', (req, res) => JSON.stringify(req.body));
 app.use(morgan(':method :url :status - :res[content-length] :response-time ms :body'));
 
 
-
-app.get('/api/contacts/', (request, response) => {
+app.get('/api/contacts/', (request, response,next) => {
     Contact.find({}).then(contacts => {
       response.json(contacts)
     })
 })
 
-app.get('/api/contacts/info', (request, response)=>{
+app.get('/api/contacts/info', (request, response,next)=>{
   Contact.countDocuments({})
     .then(result=>{
       response.json(new ApiResponse(result))
@@ -30,17 +29,21 @@ app.get('/api/contacts/info', (request, response)=>{
     })
 })
 
-app.get('/api/contacts/:id',(request,response)=>{
-  const id = Number(request.params.id)
+app.get('/api/contacts/:id',(request,response,next)=>{
+
   Contact.findByIdAndRemove(request.params.id)
     .then(result => {
-        response.status(204).end()
+        if(!result){
+          response.status(404).json(new ApiResponse("Contact not found"))
+        }else{
+          response.status(204).end()
+        }
     })
     .catch(error => next(error))
 })
 
 
-app.post('/api/contacts', (request, response)=>{
+app.post('/api/contacts', (request, response,next)=>{
   const body = request.body
 
   if (!body.name || !body.number) {
@@ -68,10 +71,7 @@ app.post('/api/contacts', (request, response)=>{
             });
         }
       })
-      .catch(queryErr => {
-        console.error(queryErr);
-        response.status(500).json(new ApiResponse("Error while querying the database."));
-      });
+      .catch(error => next(error))
   } catch (err) {
     console.log(err);
   }
@@ -79,7 +79,7 @@ app.post('/api/contacts', (request, response)=>{
 })
 
 
-app.delete('/api/contacts/:id', (request,response)=>{
+app.delete('/api/contacts/:id', (request,response,next)=>{
   const id = Number(request.params.id)
 
   if(id == null){ 
@@ -100,6 +100,23 @@ app.delete('/api/contacts/:id', (request,response)=>{
 })
 
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+// handler of requests with unknown endpoint
+app.use(unknownEndpoint)
+
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
@@ -107,3 +124,4 @@ app.listen(PORT, () => {
 
 app.use(cors())
 app.use(express.static('dist'))
+app.use(errorHandler)
