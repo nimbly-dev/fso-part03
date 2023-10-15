@@ -2,7 +2,6 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios'
 const baseUrl = '/api/contacts'
-import { isNameAlreadyExists, isNumberAlreadyExists } from '../utility/PhonebookUtil'
 
 const getPersons = ()=>{
     const request = axios.get(baseUrl)
@@ -24,6 +23,7 @@ const deletePerson = (id)=>{
 }
 
 const updatePerson = (id, newObj)=>{
+    console.log(newObj)
     const request = axios.put(`${baseUrl}/${id}`, newObj)
     return request.then(response => response.data)
 }

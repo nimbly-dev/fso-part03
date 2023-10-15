@@ -51,9 +51,13 @@ const App = () => {
         const personWithSameName = persons.find((person) => person.name === newName);
 
         phonebookService
-          .savePerson({...personWithSameName,number: newNumber})
+          .updatePerson(personWithSameName.id,personObj)
             .then((response) => {
-                setPersons(prevPersons => prevPersons.map(person =>person.id === response.data.id ? response.data : person))
+                phonebookService
+                .getPersons()
+                  .then(initialData=>{
+                    setPersons(initialData)
+                  })
                 setNewName('');
                 setNewNumber('');
             })
@@ -65,7 +69,12 @@ const App = () => {
       phonebookService
         .savePerson(personObj)
           .then(response => {
-            setPersons(persons.concat(response.data));
+            console.log("Returned data: {}", response)
+            phonebookService
+              .getPersons()
+                .then(initialData=>{
+                  setPersons(initialData)
+                })
             setNewName('');
             setNewNumber('');
             setNotification({

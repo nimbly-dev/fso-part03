@@ -11,7 +11,7 @@ const PersonList = ({searchQuery, persons, handleDelete}) =>{
                 searchQuery === '' ? persons.map(person=>{
                     return(
                     <li key={person.id}>
-                        id: {person.id} {person.name} : {person.number} 
+                        {person.name} : {person.number} 
                         <button type='button' onClick={()=>handleDelete(person.id, person.name)}>Delete</button>
                     </li>
                     )

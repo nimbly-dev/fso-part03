@@ -39,10 +39,10 @@ app.get('/api/notes/:id', (request, response) => {
 app.delete('/api/notes/:id', (request, response) => {
     const id = Number(request.params.id)
     Note.findByIdAndRemove(request.params.id)
-    .then(result => {
-        response.status(204).end()
-    })
-    .catch(error => next(error))
+      .then(result => {
+          response.status(204).end()
+      })
+      .catch(error => next(error))
     
     response.status(204).end()
 })
