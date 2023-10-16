@@ -1,31 +1,25 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
+import PropTypes from 'prop-types'
+import React from 'react'
 
-
-const Form = ({onSubmit,children}) =>{
+const Form = ({ onSubmit,children }) => {
 
     return(
         <>
             <form onSubmit={onSubmit} name="phoneBookForm">
-                    {
-                        /*ALTERNATE MAP IMPL WITH INPUTFIELDS OBJ ARRAY*/
-
-                        // inputFields.map(inputField=>{
-                        //     return(
-                        //         <div key={inputField.label}>
-                        //             {/* <InputField handleOnChange={inputField.onChange} label={inputField.label} value={inputField.value}/> */}
-                        //             {inputField.label}: <input onChange={inputField.onChange} value={inputField.value} />
-                        //         </div>
-                        //     )
-                        // })
-                        children
-                    }
+                {
+                    children
+                }
                 <div>
                     <button type="submit">Add</button>
                 </div>
             </form>
         </>
     )
+}
+
+Form.propTypes = {
+    onSubmit: PropTypes.func.isRequired, // 'onSubmit' should be a function
+    children: PropTypes.node.isRequired, // 'children' can be any valid React node
 }
 
 export default Form
