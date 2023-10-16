@@ -63,6 +63,13 @@ const App = () => {
             })
             .catch(error=>{
               console.log(error)
+              setNotification({
+                message: `${error.response.data.error}`,
+                className: "notification error"
+              })
+              setTimeout(() => {
+                setNotification({})
+              }, 5000)
             })
        }  
     }else{
@@ -87,6 +94,13 @@ const App = () => {
           })
           .catch(err=>{
             console.log(err)  
+            setNotification({
+              message: `${err.response.data.error}`,
+              className: "notification error"
+            })
+            setTimeout(() => {
+              setNotification({})
+            }, 5000)
           })
     }
   }
